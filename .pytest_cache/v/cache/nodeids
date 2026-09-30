@@ -1,0 +1,14 @@
+[
+  "tests/test_studio.py::test_brief_injection_blocked",
+  "tests/test_studio.py::test_brief_pii_redacted",
+  "tests/test_studio.py::test_brief_too_thin_blocked",
+  "tests/test_studio.py::test_e2e_injection_blocked",
+  "tests/test_studio.py::test_e2e_studio_offline",
+  "tests/test_studio.py::test_e2e_thin_brief_blocked",
+  "tests/test_studio.py::test_image_chain_falls_back_to_placeholder",
+  "tests/test_studio.py::test_placeholder_provider_labelled",
+  "tests/test_studio.py::test_score_copy_deterministic",
+  "tests/test_studio.py::test_score_visuals_placeholder_low",
+  "tests/test_studio.py::test_template_copies_unknown_tone_defaults",
+  "tests/test_studio.py::test_template_copies_variants_and_uniqueness"
+]
