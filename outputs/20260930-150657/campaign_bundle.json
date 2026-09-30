@@ -1,0 +1,52 @@
+{
+  "brief": {
+    "product": "Aura smart water bottle",
+    "description": "A smart water bottle that tracks hydration and glows to remind you to drink water.",
+    "audience": "urban fitness enthusiasts",
+    "tone": "friendly",
+    "variants": 3
+  },
+  "copies": [
+    {
+      "tagline": "Aura smart water bottle: makes urban fitness enthusiasts life, built to last.",
+      "ad_copy": "Say hello to Aura smart water bottle \u2014 A smart water bottle that tracks hydration and. Built for urban fitness enthusiasts, it makes every day a little better. Join thousands of happy customers.",
+      "cta": "Join thousands of happy customers."
+    },
+    {
+      "tagline": "Aura smart water bottle: makes urban fitness enthusiasts life, effortlessly.",
+      "ad_copy": "Meet Aura smart water bottle \u2014 A smart water bottle that tracks hydration and. Built for urban fitness enthusiasts, it makes every day a little better. Start your free trial now.",
+      "cta": "Start your free trial now."
+    },
+    {
+      "tagline": "Aura smart water bottle: gives urban fitness enthusiasts life, with zero hassle.",
+      "ad_copy": "Say hello to Aura smart water bottle \u2014 A smart water bottle that tracks hydration and. Built for urban fitness enthusiasts, it gives every day a little better. Try it free today.",
+      "cta": "Try it free today."
+    }
+  ],
+  "visuals": [
+    {
+      "prompt": "Advertising hero image for 'Aura smart water bottle', friendly tone. Target audience: urban fitness enthusiasts. Tagline: Aura smart water bottle: makes urban fitness enthusiasts life, built to last.. Product context: A smart water bottle that tracks hydration and glows to remind you to drink water.. Professional marketing photography style, no text overlay.",
+      "path": "outputs/20260930-150657/images/visual_1.png",
+      "provider": "placeholder"
+    },
+    {
+      "prompt": "Advertising hero image for 'Aura smart water bottle', friendly tone. Target audience: urban fitness enthusiasts. Tagline: Aura smart water bottle: makes urban fitness enthusiasts life, effortlessly.. Product context: A smart water bottle that tracks hydration and glows to remind you to drink water.. Professional marketing photography style, no text overlay.",
+      "path": "outputs/20260930-150657/images/visual_2.png",
+      "provider": "placeholder"
+    },
+    {
+      "prompt": "Advertising hero image for 'Aura smart water bottle', friendly tone. Target audience: urban fitness enthusiasts. Tagline: Aura smart water bottle: gives urban fitness enthusiasts life, with zero hassle.. Product context: A smart water bottle that tracks hydration and glows to remind you to drink water.. Professional marketing photography style, no text overlay.",
+      "path": "outputs/20260930-150657/images/visual_3.png",
+      "provider": "placeholder"
+    }
+  ],
+  "critique": {
+    "copy_score": 9.0,
+    "visual_score": 4.0,
+    "notes": [
+      "all visuals are labelled placeholders \u2014 connect an image provider for real generations"
+    ],
+    "approved": false
+  },
+  "campaign_plan": "Launch plan for **Aura smart water bottle** (friendly tone, audience: urban fitness enthusiasts):\n1. **Social (week 1):** teaser visuals + tagline across Instagram/TikTok; 3 posts/day.\n2. **Email (week 1-2):** launch sequence to existing list with the hero visual and CTA.\n3. **Paid search/social (week 2-4):** A/B the copy variants, kill losers after 1k impressions.\n4. **Influencers (week 3):** 5 micro-creators in the target niche.\n5. **Retargeting (week 4+):** site visitors see the winning variant.\nMeasure: CTR, CAC, and signup conversion weekly."
+}
