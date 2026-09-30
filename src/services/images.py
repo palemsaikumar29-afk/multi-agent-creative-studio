@@ -33,7 +33,7 @@ def _pollinations(prompt: str, seed: int, width: int = 1024,
         prompt=urllib.parse.quote(prompt)) + "?" + params
     # sandbox proxy quirk: bypass the broken default no_proxy
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
-    req = urllib.request.Request(url, headers={"User-Agent": "muse-studio/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "creative-studio/1.0"})
     with opener.open(req, timeout=TIMEOUT_S) as resp:
         data = resp.read()
     if not data or len(data) < 1024:

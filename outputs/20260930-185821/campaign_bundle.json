@@ -1,0 +1,42 @@
+{
+  "brief": {
+    "product": "Aurora Sunrise Alarm Clock",
+    "description": "A sunrise-simulating alarm clock with app control, sleep tracking, and gentle nature wake sounds. Wakes you gradually with warm light instead of a jarring buzzer.",
+    "audience": "Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits",
+    "tone": "friendly",
+    "variants": 2
+  },
+  "copies": [
+    {
+      "tagline": "Aurora Sunrise Alarm Clock: makes Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits life, built to last.",
+      "ad_copy": "Say hello to Aurora Sunrise Alarm Clock \u2014 A sunrise-simulating alarm clock with app control, sleep. Built for Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits, it makes every day a little better. Join thousands of happy customers.",
+      "cta": "Join thousands of happy customers."
+    },
+    {
+      "tagline": "Aurora Sunrise Alarm Clock: makes Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits life, effortlessly.",
+      "ad_copy": "Meet Aurora Sunrise Alarm Clock \u2014 A sunrise-simulating alarm clock with app control, sleep. Built for Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits, it makes every day a little better. Start your free trial now.",
+      "cta": "Start your free trial now."
+    }
+  ],
+  "visuals": [
+    {
+      "prompt": "Advertising hero image for 'Aurora Sunrise Alarm Clock', friendly tone. Target audience: Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits. Tagline: Aurora Sunrise Alarm Clock: makes Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits life, built to last.. Product context: A sunrise-simulating alarm clock with app control, sleep tracking, and gentle nature wake sounds. Wakes you gradually with warm light instead of a jarring buzze. Professional marketing photography style, no text overlay.",
+      "path": "outputs/20260930-185821/images/visual_1.png",
+      "provider": "placeholder"
+    },
+    {
+      "prompt": "Advertising hero image for 'Aurora Sunrise Alarm Clock', friendly tone. Target audience: Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits. Tagline: Aurora Sunrise Alarm Clock: makes Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits life, effortlessly.. Product context: A sunrise-simulating alarm clock with app control, sleep tracking, and gentle nature wake sounds. Wakes you gradually with warm light instead of a jarring buzze. Professional marketing photography style, no text overlay.",
+      "path": "outputs/20260930-185821/images/visual_2.png",
+      "provider": "placeholder"
+    }
+  ],
+  "critique": {
+    "copy_score": 9.0,
+    "visual_score": 4.0,
+    "notes": [
+      "all visuals are labelled placeholders \u2014 connect an image provider for real generations"
+    ],
+    "approved": false
+  },
+  "campaign_plan": "Launch plan for **Aurora Sunrise Alarm Clock** (friendly tone, audience: Busy urban professionals aged 28-45 who struggle with early mornings and want better sleep habits):\n1. **Social (week 1):** teaser visuals + tagline across Instagram/TikTok; 3 posts/day.\n2. **Email (week 1-2):** launch sequence to existing list with the hero visual and CTA.\n3. **Paid search/social (week 2-4):** A/B the copy variants, kill losers after 1k impressions.\n4. **Influencers (week 3):** 5 micro-creators in the target niche.\n5. **Retargeting (week 4+):** site visitors see the winning variant.\nMeasure: CTR, CAC, and signup conversion weekly."
+}

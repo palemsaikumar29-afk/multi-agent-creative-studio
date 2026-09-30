@@ -1,4 +1,6 @@
 [
+  "tests/test_app_startup.py::test_build_app",
+  "tests/test_live_llm.py::test_pollinations_live",
   "tests/test_studio.py::test_brief_injection_blocked",
   "tests/test_studio.py::test_brief_pii_redacted",
   "tests/test_studio.py::test_brief_too_thin_blocked",
