@@ -40,10 +40,15 @@ def brief_node(state: dict) -> dict:
 def copy_node(state: dict) -> dict:
     brief = state["brief"]
     round_no = state.get("round", 0)
+    # Directed revision: the previous round's critic notes flow into the
+    # copywriter's next prompt instead of a blind re-roll.
+    revision_notes = state.get("critique", {}).get("notes") or None
     copies, offline = write_copies(brief["product"], brief["description"],
                                    brief["audience"], brief["tone"],
-                                   brief["variants"], seed=7 + round_no * 101)
-    return {"copies": copies, "copy_offline": offline, "round": round_no + 1}
+                                   brief["variants"], seed=7 + round_no * 101,
+                                   revision_notes=revision_notes)
+    return {"copies": copies, "copy_offline": offline, "round": round_no + 1,
+            "revision_notes": revision_notes}
 
 
 def _visual_prompt(brief: dict, copy: dict) -> str:
@@ -100,37 +105,105 @@ def score_visuals(visuals: list[dict]) -> tuple[float, list[str]]:
     notes: list[str] = []
     if not visuals:
         return 0.0, ["no visual assets produced"]
-    providers = {v["provider"] for v in visuals}
-    if providers == {"placeholder"}:
-        notes.append("all visuals are labelled placeholders — connect an "
-                     "image provider for real generations")
+    total = len(visuals)
+    placeholders = sum(1 for v in visuals if v.get("provider") == "placeholder")
+    if placeholders > total / 2:
+        # A placeholder-majority campaign must never be approved: the
+        # "visuals" are labelled stand-ins, not real generations.
+        notes.append(
+            f"{placeholders} of {total} visuals are labelled placeholders — "
+            "a placeholder-majority campaign cannot be approved; connect an "
+            "image provider for real generations")
         return 4.0, notes
+    providers = {v.get("provider") for v in visuals}
     if "pollinations" in providers or "dalle" in providers:
         return 9.0, notes
     return 6.0, notes
 
 
+def _critic_prompt(copies: list[dict], brief: dict) -> str:
+    lines = ["You are a creative director critiquing ad-copy variants.",
+             f"Product: {brief['product']}",
+             f"Audience: {brief['audience']}",
+             f"Tone: {brief['tone']}",
+             f"Description: {brief['description'][:200]}",
+             "", "Variants:"]
+    for i, c in enumerate(copies, 1):
+        lines += [f"{i}. TAGLINE: {c['tagline']}",
+                  f"   AD: {c['ad_copy']}",
+                  f"   CTA: {c['cta']}"]
+    lines += [
+        "",
+        ("Score the SET from 0 to 10 on: tagline punchiness, ad-copy "
+         "relevance to the product and audience, tone fit, variety across "
+         "variants, and call-to-action strength."),
+        "Reply in EXACTLY this format and nothing else:",
+        "SCORE: <number 0-10, one decimal>",
+        "NOTES:",
+        ("- <one specific, actionable note per issue; name the variant "
+         "number it applies to>"),
+    ]
+    return "\n".join(lines)
+
+
+_SCORE_RE = re.compile(r"SCORE\s*:\s*(\d+(?:\.\d+)?)", re.IGNORECASE)
+_NOTES_HEADER_RE = re.compile(r"NOTES\s*:", re.IGNORECASE)
+
+
+def _parse_critic_response(raw: str) -> tuple[float, list[str]]:
+    """Parse the model's SCORE/NOTES reply.
+
+    Raises ValueError when the reply is not in the required format, so the
+    caller can degrade to the deterministic scorer instead of guessing.
+    """
+    m = _SCORE_RE.search(raw or "")
+    if not m:
+        raise ValueError("critic reply has no SCORE line")
+    score = max(0.0, min(10.0, float(m.group(1))))
+    notes: list[str] = []
+    in_notes = False
+    for line in (raw or "").splitlines():
+        stripped = line.strip()
+        if _NOTES_HEADER_RE.match(stripped):
+            in_notes = True
+            continue
+        if in_notes and stripped[:1] in ("-", "*", "\u2022") and len(stripped) > 1:
+            notes.append(stripped[1:].strip())
+    if not notes:
+        raise ValueError("critic reply has no NOTES bullets")
+    return score, notes
+
+
+def _model_critic_score(copies: list[dict],
+                        brief: dict) -> tuple[float, list[str]]:
+    """Score copy with the model. Raises on any failure (offline, error,
+    unparseable reply) so the caller falls back to deterministic scoring."""
+    raw = call_llm_with_retry(_critic_prompt(copies, brief))
+    return _parse_critic_response(raw)
+
+
 def critique_node(state: dict) -> dict:
     brief = state["brief"]
+    # Model-based scoring when a key is configured; the deterministic
+    # length/keyword scorer is only the honest fallback.
     copy_score, copy_notes = score_copy(state["copies"], brief)
+    critic_mode = "deterministic"
+    _, _, key_present, _ = provider_status()
+    if key_present:
+        try:
+            copy_score, copy_notes = _model_critic_score(state["copies"],
+                                                         brief)
+            critic_mode = "model"
+        except Exception:  # noqa: BLE001,S110 - deterministic fallback kept
+            pass
     visual_score, visual_notes = score_visuals(state["visuals"])
     approved = (copy_score >= APPROVAL_THRESHOLD
                 and visual_score >= APPROVAL_THRESHOLD)
     notes = copy_notes + visual_notes
-    _, _, key_present, _ = provider_status()
-    if key_present and not approved and state.get("round", 1) <= 1:
-        # one LLM critique pass for richer notes
-        try:
-            raw = call_llm_with_retry(
-                "You are a creative director. In 3 bullet points, critique "
-                "these ad taglines for a campaign:\n"
-                + "\n".join(f"- {c['tagline']}" for c in state["copies"]))
-            notes = [raw.strip()] + notes
-        except Exception:  # noqa: BLE001 - notes stay template-only
-            notes = list(notes)
     return {"critique": {"copy_score": round(copy_score, 1),
                          "visual_score": round(visual_score, 1),
-                         "notes": notes, "approved": approved}}
+                         "notes": notes, "approved": approved,
+                         "critic_mode": critic_mode}}
 
 
 def plan_node(state: dict) -> dict:

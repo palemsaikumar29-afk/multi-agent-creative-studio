@@ -47,8 +47,9 @@ def do_download() -> list[str] | None:
 
 def status_line() -> str:
     provider, model, key_present, reason = provider_status()
-    llm = f"LLM: {provider}/{model} — live" if key_present else \
-        f"LLM: offline ({reason}) — template copy + deterministic critic"
+    llm = f"LLM: {provider}/{model} — live (model critic + directed rewrites)" \
+        if key_present else \
+        f"LLM: offline ({reason}) — template copy + deterministic critic fallback"
     return llm + " · images: Pollinations (free) → DALL-E → labelled placeholder"
 
 

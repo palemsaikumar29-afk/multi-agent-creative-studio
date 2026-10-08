@@ -41,6 +41,41 @@ _CTAS = [
 ]
 
 
+def _base_prompt(product: str, description: str, audience: str,
+                 tone: str, variants: int) -> str:
+    return (
+        f"Write {variants} distinct ad-copy variants for a product.\n"
+        f"Product: {product}\nDescription: {description}\n"
+        f"Audience: {audience}\nTone: {tone}\n\n"
+        "For each variant reply in this exact block format:\n"
+        "TAGLINE: <short tagline>\nAD: <2-3 sentence ad copy>\n"
+        "CTA: <call to action>\n---\n"
+    )
+
+
+def _rewrite_prompt(product: str, description: str, audience: str,
+                    tone: str, variants: int,
+                    revision_notes: list[str] | None) -> str:
+    """Build the LLM copy prompt; critic notes become directed instructions.
+
+    Pure function of its inputs so the directed-rewrite behaviour is
+    unit-testable without an API key.
+    """
+    prompt = _base_prompt(product, description, audience, tone, variants)
+    notes = [n.strip() for n in (revision_notes or []) if n and n.strip()]
+    if notes:
+        prompt += (
+            "\nA creative director reviewed the previous draft and left "
+            "these notes. This is a DIRECTED REVISION, not a fresh start: "
+            "address every note below in your rewrite, keep what already "
+            "worked, and do not simply re-roll new variants.\n"
+            "CRITIC NOTES:\n"
+            + "\n".join(f"- {n}" for n in notes)
+            + "\n"
+        )
+    return prompt
+
+
 def _template_copies(product: str, description: str, audience: str,
                      tone: str, variants: int, seed: int = 7) -> list[dict]:
     rng = random.Random(seed)
@@ -65,18 +100,21 @@ def _template_copies(product: str, description: str, audience: str,
 
 
 def write_copies(product: str, description: str, audience: str, tone: str,
-                 variants: int, seed: int = 7) -> tuple[list[dict], bool]:
-    """Return (copies, offline)."""
+                 variants: int, seed: int = 7,
+                 revision_notes: list[str] | None = None
+                 ) -> tuple[list[dict], bool]:
+    """Return (copies, offline).
+
+    When a key is configured and revision_notes are provided, the notes are
+    embedded in the prompt so the rewrite is directed at the critic's
+    feedback. In template (offline) mode the notes cannot drive the
+    deterministic engine, so the rewrite is a new-seed re-roll and the
+    returned offline flag stays True to keep that honest.
+    """
     _, _, key_present, _ = provider_status()
     if key_present:
-        prompt = (
-            f"Write {variants} distinct ad-copy variants for a product.\n"
-            f"Product: {product}\nDescription: {description}\n"
-            f"Audience: {audience}\nTone: {tone}\n\n"
-            "For each variant reply in this exact block format:\n"
-            "TAGLINE: <short tagline>\nAD: <2-3 sentence ad copy>\n"
-            "CTA: <call to action>\n---\n"
-        )
+        prompt = _rewrite_prompt(product, description, audience, tone,
+                                 variants, revision_notes)
         try:
             raw = call_llm_with_retry(prompt)
             blocks = [b.strip() for b in raw.split("---") if b.strip()]

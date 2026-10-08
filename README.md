@@ -15,14 +15,21 @@ brief
 ┌─ copywriter ── taglines + ad copy + CTAs
 ├─ visual designer ── hero images per variant
 ├─ critic ── scores copy & visuals 0-10; approved >= 7.0
-│    └─ revision loop: copy re-generated with a new seed, up to 2 rounds
+│    ├─ model-based copy scoring when an LLM key is configured
+│    │   (deterministic length/keyword scorer is the honest fallback);
+│    │   the critic's notes feed the copywriter's next prompt so each
+│    │   revision is a directed rewrite, not a re-roll
+│    ├─ a placeholder-majority visual set (e.g. 2 of 3) is never approved
+│    └─ revision loop: copy re-generated (new seed), up to 2 rounds
 ├─ strategist ── 5-channel launch plan
 └─ bundle ── campaign_bundle.json + campaign.md (+ images) in outputs/<run>
 ```
 
 Agents are LLM-backed when an API key is configured; without one the
 pipeline runs in clearly-labelled offline mode (deterministic template
-copy + deterministic critic scoring), so every run is testable.
+copy + deterministic critic scoring), so every run is testable. In both
+modes every image records the provider actually used, and the critic
+never approves a campaign whose visuals are mostly labelled placeholders.
 
 ## Image provider chain
 
@@ -66,11 +73,13 @@ exponential backoff (3 attempts).
 
 ## Test evidence
 
-- `make test`: **12 passed** — brief blocking (too thin, injection, PII
+- `make test`: **28 passed** — brief blocking (too thin, injection, PII
   redaction), template copy variant count + uniqueness, deterministic
   critic scoring, placeholder labelling, provider-chain fallback to
   placeholder, e2e studio runs (offline), revision-loop termination,
-  bundle file export.
+  bundle file export, plus the critic rework: model-based scoring with
+  deterministic fallback, directed rewrites (critic notes reach the
+  copywriter's next prompt), and the placeholder-majority approval gate.
 - `make test-all` additionally runs live Pollinations generation checks
   (opt-in, skipped by default) and a Gradio app startup smoke test.
 - `make lint`: ruff clean.

@@ -50,10 +50,14 @@ def _route_after_critique(state: dict) -> str:
     if critique.get("approved"):
         return "plan"
     if state.get("round", 1) > MAX_REVISION_ROUNDS:
-        return "plan"
+        return "plan"  # rounds exhausted: fail honestly, plan anyway
     if critique.get("copy_score", 0) < APPROVAL_THRESHOLD:
         return "copy"
-    return "plan"  # visuals only fail on placeholder mode; plan anyway
+    if critique.get("visual_score", 0) < APPROVAL_THRESHOLD:
+        # Visuals get a revision round too: re-running copy+visual retries
+        # the image providers with a fresh seed. Bounded by the round cap.
+        return "copy"
+    return "plan"
 
 
 def build_pipeline():
